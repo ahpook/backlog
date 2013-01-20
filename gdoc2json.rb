@@ -3,10 +3,20 @@
 require 'sinatra'
 require 'json'
 require 'csv'
+require 'open-uri'
 
 get '/data' do
   content_type :json
-  gdoc = CSV.read("data.csv")
+  begin
+    fh = open('https://docs.google.com/spreadsheet/pub?key=0Atq4T3BlL5qedFZNcENEMlZBa2M5UzZ5OXdaZzJWcXc&single=true&gid=0&output=csv')
+  rescue => e
+    halt "could not open url: #{e.message}"
+  end
+
+  gdoc = []
+  CSV.new(fh).each do |line|
+    gdoc << line
+  end
   # gdoc now an array of arrays, with a structure like
   # [["Meta","Axes",titleC,titleD...],
   #  ["description1","Axis name 1",valueC1,valueD1...],
@@ -27,5 +37,6 @@ get '/data' do
   # now tranpose safely
   ticket_array = gdoc.transpose
 
+  # and spit it out as json
   ticket_array.to_json
 end
