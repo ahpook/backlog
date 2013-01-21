@@ -23,20 +23,29 @@ get '/data' do
   #  ["description8","Axis name 8",valueC8,valueD8...],
   #  ["","Total",totalC,totalD...]]
 
-  # we need to transpose this data structure, making a hash
-  # keyed by the titles in row0[3..-1], whose values are an array
-  # of the values of rows[1..-1][n], where `n` is the index of
-  # that column in the row0 array.
-
+  # we need to transpose this data structure,
   # but transpose blows up if any row is uneven, so pad with nil
   # http://stackoverflow.com/questions/250789/ruby-and-fastercsv-converting-uneven-rows-to-columns
   size = gdoc.max { |r1, r2| r1.size <=> r2.size }.size
   # Enlarge matrix inserting nils as needed
   gdoc.each { |r| r[size - 1] ||= nil }
 
+  # pop off the totals since they confuse the columns
+  totals = gdoc.pop[2..-1]
+
   # now tranpose safely
   ticket_array = gdoc.transpose
 
+  output = { :Totals => totals }
+  # take the header columns and make hash keys out of them,
+  # then the rest of the rows are the an array of values
+  # { 'Meta' => [ rest of row ], 'Axes' => [ rest of row ], 
+  #   'titleC' => [...], 'titleD' => [...] }
+  ticket_array.each do |column|
+    this_key = column.shift
+    output[this_key.intern] = column
+  end
+
   # and spit it out as json
-  ticket_array.to_json
+  JSON.pretty_generate(output)
 end
