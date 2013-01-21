@@ -1,0 +1,335 @@
+<!DOCTYPE html> 
+<html lang="en"> 
+  <head>
+    <meta charset="utf-8"> 
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+    <script src="js/raphael-1.5.2.min.js"></script> 
+    <script src="js/raphael-radar.js"></script> 
+    <script src="js/scale.raphael.js"></script>
+    <style type="text/css">
+      html,body{
+        margin:0;padding:0;
+        font-family: "Avenir Next Medium",sans-serif;
+        background: #fefefe;
+      }
+      a,a:visited,a:link,a:active{
+        color:DodgerBlue;
+        font-weight: bold;
+        display: inline-block;
+        background: #f4f4f4;
+        padding:10px;
+        margin-bottom: .3em;
+        text-decoration: none;
+      }
+      a:hover,a.sel{
+        background: DodgerBlue;
+        color: white;
+      }
+
+      div.stack div{position:absolute;top:0px;left:0px;float:left;"}
+    </style>
+    <script>
+      var c_bg = "#FFFFFF";
+      var c_s0 = "#CCCCCC";
+      var c_s1 = "#A50026";
+      var c_s2 = "#D73027";
+      var c_s3 = "#F46D43";
+      var c_s4 = "#FDAE61";
+      var c_s5 = "#FEE090";
+      var c_s6 = "#E0F3F8";
+      var c_s7 = "#ABD9E9";
+      var c_s8 = "#74ADD1";
+      var c_s9 = "#4575B4";
+      var c_s10 = "#313695";
+      var m_line_width = 2;
+    </script>
+  </head>
+  <body>
+    <div id="graphs" class="stack">
+      <div id="graph0"></div>
+      <div id="graph1"></div>
+      <div id="graph2"></div>
+      <div id="graph3"></div>
+      <div id="graph4"></div>
+      <div id="graph5"></div>
+      <div id="graph6"></div>
+      <div id="graph7"></div>
+      <div id="graph8"></div>
+      <div id="graph9"></div>
+      <div id="graph10"></div>
+    </div>
+    <div 
+      style="
+        position:absolute;
+        top:40px;
+        left:600px;
+        border-left:solid 1px #ccc;
+        height:600px;
+        width:250px;
+        padding:50px;
+      ">
+      <p>Arrange: </p>
+        <a href="#" id="btnUnstack">Unstack</a>
+        <a href="#" id="btnStack">Stack</a>
+
+      <p>Toggle:</p>
+        <a href="#" id="btnShowAll">Show All</a>
+        <a href="#" id="btnHideAll">Hide All</a>
+      <p>
+        <a href="#" id="btn1">8040</a>
+        <a href="#" id="btn2">11331</a>
+        <a href="#" id="btn3">11473</a>
+        <a href="#" id="btn4">13196</a>
+        <a href="#" id="btn5">17020</a>
+        <a href="#" id="btn6">17783</a>
+        <a href="#" id="btn7">18456</a>
+        <a href="#" id="btn8">18494</a>
+        <a href="#" id="btn9">18495</a>
+        <a href="#" id="btn10">18508</a>
+      </p>
+    </div>
+
+  </body>
+
+  <script>
+    $(document).ready(function(){
+      var labels =  
+        [
+          "Simplicity",
+          "Delight",
+          "Safety",
+          "Product",
+          "Timeliness",
+          "Monetization",
+          "Impact",
+          "Engineering"
+        ];
+      
+      var max_point = 4;
+
+      var series1 = 
+        [{
+          title: "8040 (Class containment, anchor pattern)",
+          simplicity: 1,
+          delight: 4,
+          safety: 2.5,
+          product: 3,
+          timeliness: 2.5,
+          monetization: 1,
+          impact: 3.5,
+          engineering: 3,
+          draw_options: {
+            lines: {'stroke-width':m_line_width, 'stroke':c_s1},
+            points: {'fill':c_s1,'stroke-width':'0'}
+          }
+        }]
+        
+      var series2 = 
+        [{
+          title: "11331 (Looping in manifests)",
+          simplicity: 4,
+          delight: 4,
+          safety: 3.5,
+          product: 1,
+          timeliness: 1,
+          monetization: 1,
+          impact: 4,
+          engineering: 2,
+          draw_options: {
+            lines: {'stroke-width':m_line_width, 'stroke':c_s2},
+            points: {'fill':c_s2,'stroke-width':'0'}
+          }
+        }]
+
+      var series3 = 
+        [{ 
+          title: "11473 (defaults.rb)",
+          simplicity: 2,
+          delight: 3.5,
+          safety: 4,
+          product: 2,
+          timeliness: 2,
+          monetization: 4,
+          impact: 2,
+          engineering: 2,
+          draw_options: {
+            lines: {'stroke-width':m_line_width, 'stroke':c_s3},
+            points: {'fill':c_s3,'stroke-width':'0'}
+          }
+        }]
+      
+      var series4 =
+        [{ 
+          title: "13196 (PowerShell provider)",
+          simplicity: 2,
+          delight: 3.5,
+          safety: 4,
+          product: 2,
+          timeliness: 2,
+          monetization: 4,
+          impact: 2,
+          engineering: 2,
+          draw_options: {
+            lines: {'stroke-width':m_line_width, 'stroke':c_s4},
+            points: {'fill':c_s4,'stroke-width':'0'}
+          }
+        }]
+
+      var series5 = 
+        [{ 
+          title: "17020 (Modularize puppet)",
+          simplicity: 1,
+          delight: 2,
+          safety: 2,
+          product: 2,
+          timeliness: 3,
+          monetization: 1,
+          impact: 2,
+          engineering: 4,
+          draw_options: {
+            lines: {'stroke-width':m_line_width, 'stroke':c_s5},
+            points: {'fill':c_s5,'stroke-width':'0'}
+          }
+        }]
+
+      var series6 = 
+        [{ 
+          title: "17783 (Public interface to reinitialize settings)",
+          simplicity: 1,
+          delight: 3,
+          safety: 2.5,
+          product: 2,
+          timeliness: 3,
+          monetization: 1,
+          impact: 1,
+          engineering: 3,
+          draw_options: {
+            lines: {'stroke-width':m_line_width, 'stroke':c_s6},
+            points: {'fill':c_s6,'stroke-width':'0'}
+          }
+        }]
+
+      var series7 = 
+        [{ 
+          title: "18456 ('ensure => latest')",
+          simplicity: 1,
+          delight: 2,
+          safety: 2,
+          product: 2,
+          timeliness: 4,
+          monetization: 4,
+          impact: 2,
+          engineering: 1,
+          draw_options: {
+            lines: {'stroke-width':m_line_width, 'stroke':c_s7},
+            points: {'fill':c_s7,'stroke-width':'0'}
+          }
+        }]
+
+      var series8 = 
+       [{ 
+          title: "18494 (Ruby 2.0)",
+          simplicity: 3,
+          delight: 3,
+          safety: 3,
+          product: 3,
+          timeliness: 4,
+          monetization: 1,
+          impact: 1,
+          engineering: 1,
+          draw_options: {
+            lines: {'stroke-width':m_line_width, 'stroke':c_s8},
+            points: {'fill':c_s8,'stroke-width':'0'}
+          }
+        }]
+
+      var series9 = 
+        [{ 
+          title: "18495 (Test puppet packages)",
+          simplicity: 1,
+          delight: 3,
+          safety: 4,
+          product: 2,
+          timeliness: 1,
+          monetization: 1,
+          impact: 2,
+          engineering: 4,
+          draw_options: {
+            lines: {'stroke-width':m_line_width, 'stroke':c_s8},
+            points: {'fill':c_s9,'stroke-width':'0'}
+          }
+        }]
+
+      var series10 =
+        [{ 
+          title: "18508 (Preserve ordering of resources)",
+          simplicity: 1,
+          delight: 4,
+          safety: 1,
+          product: 3,
+          timeliness: 1,
+          monetization: 2.5,
+          impact: 4,
+          engineering: 3,
+          draw_options: {
+            lines: {'stroke-width':m_line_width, 'stroke':c_s8},
+            points: {'fill':c_s10,'stroke-width':'0'}
+          }
+        }]
+
+      var series0 =
+        [{ 
+          title: " ",
+          simplicity: 1,
+          delight: 1,
+          safety: 1,
+          product: 1,
+          timeliness: 1,
+          monetization: 1,
+          impact: 1,
+          engineering: 1,
+          draw_options: {
+            lines: {'stroke-width':0, 'stroke':'transparent'},
+            points: {'fill':'transparent','stroke-width':'0'}
+          }
+        }]
+
+      new Raphael( "graph0", 600, 600).radarchart(280, 240, 180, labels, 4, series0);
+      new Raphael( "graph1", 600, 600).radarchart(280, 240, 180, labels, 4, series1);
+      new Raphael( "graph2", 600, 600).radarchart(280, 240, 180, labels, 4, series2);
+      new Raphael( "graph3", 600, 600).radarchart(280, 240, 180, labels, 4, series3);
+      new Raphael( "graph4", 600, 600).radarchart(280, 240, 180, labels, 4, series4);
+      new Raphael( "graph5", 600, 600).radarchart(280, 240, 180, labels, 4, series5);
+      new Raphael( "graph6", 600, 600).radarchart(280, 240, 180, labels, 4, series6);
+      new Raphael( "graph7", 600, 600).radarchart(280, 240, 180, labels, 4, series7);
+      new Raphael( "graph8", 600, 600).radarchart(280, 240, 180, labels, 4, series8);
+      new Raphael( "graph9", 600, 600).radarchart(280, 240, 180, labels, 4, series9);
+      new Raphael( "graph10", 600, 600).radarchart(280, 240, 180, labels, 4, series10);
+
+      $("#graph1,#graph2,#graph3,#graph4,#graph5,#graph6,#graph7,#graph8,#graph9,#graph10").hide();
+      $("#btn1").click(function(){$("#graph1").toggle()});
+      $("#btn2").click(function(){$("#graph2").toggle()});
+      $("#btn3").click(function(){$("#graph3").toggle()});
+      $("#btn4").click(function(){$("#graph4").toggle()});
+      $("#btn5").click(function(){$("#graph5").toggle()});
+      $("#btn6").click(function(){$("#graph6").toggle()});
+      $("#btn7").click(function(){$("#graph7").toggle()});
+      $("#btn8").click(function(){$("#graph8").toggle()});
+      $("#btn9").click(function(){$("#graph9").toggle()});
+      $("#btn10").click(function(){$("#graph10").toggle()});
+      $("#btnUnstack").click(function(){
+        $("#graph1,#graph2,#graph3,#graph4,#graph5,#graph6,#graph7,#graph8,#graph9,#graph10").show();
+        $("#graphs").removeClass('stack');
+      });
+      $("#btnStack").click(function(){
+        $("#graphs").addClass('stack');
+      });
+      $("#btnShowAll").click(function () {
+        $("#graph1,#graph2,#graph3,#graph4,#graph5,#graph6,#graph7,#graph8,#graph9,#graph10").show();
+      });
+      $("#btnHideAll").click(function () {
+        $("#graph1,#graph2,#graph3,#graph4,#graph5,#graph6,#graph7,#graph8,#graph9,#graph10").hide();
+      });
+    });
+  </script>
+</html>
